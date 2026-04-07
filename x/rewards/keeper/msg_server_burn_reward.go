@@ -15,6 +15,9 @@ func (k msgServer) BurnReward(ctx context.Context, msg *types.MsgBurnReward) (*t
 	if _, err := k.addressCodec.StringToBytes(msg.Creator); err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, "invalid creator address")
 	}
+	if err := k.isAuthorizedOperator(ctx, msg.Creator); err != nil {
+		return nil, err
+	}
 
 	owner, err := k.addressCodec.StringToBytes(msg.Owner)
 	if err != nil {

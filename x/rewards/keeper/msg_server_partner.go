@@ -17,6 +17,9 @@ func (k msgServer) CreatePartner(ctx context.Context, msg *types.MsgCreatePartne
 	if _, err := k.addressCodec.StringToBytes(msg.Creator); err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid address: %s", err))
 	}
+	if err := k.isAuthorizedOperator(ctx, msg.Creator); err != nil {
+		return nil, err
+	}
 	if _, err := k.addressCodec.StringToBytes(msg.Wallet); err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid wallet address: %s", err))
 	}
@@ -55,6 +58,9 @@ func (k msgServer) UpdatePartner(ctx context.Context, msg *types.MsgUpdatePartne
 	if _, err := k.addressCodec.StringToBytes(msg.Creator); err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid signer address: %s", err))
 	}
+	if err := k.isAuthorizedOperator(ctx, msg.Creator); err != nil {
+		return nil, err
+	}
 	if _, err := k.addressCodec.StringToBytes(msg.Wallet); err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid wallet address: %s", err))
 	}
@@ -65,16 +71,12 @@ func (k msgServer) UpdatePartner(ctx context.Context, msg *types.MsgUpdatePartne
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidRequest, err.Error())
 	}
 
-	val, err := k.Partner.Get(ctx, msg.Index)
+	_, err := k.Partner.Get(ctx, msg.Index)
 	if err != nil {
 		if errors.Is(err, collections.ErrNotFound) {
 			return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 		}
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
-	}
-
-	if msg.Creator != val.Creator {
-		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
 	partner := types.Partner{
@@ -98,17 +100,16 @@ func (k msgServer) DeletePartner(ctx context.Context, msg *types.MsgDeletePartne
 	if _, err := k.addressCodec.StringToBytes(msg.Creator); err != nil {
 		return nil, errorsmod.Wrap(sdkerrors.ErrInvalidAddress, fmt.Sprintf("invalid signer address: %s", err))
 	}
+	if err := k.isAuthorizedOperator(ctx, msg.Creator); err != nil {
+		return nil, err
+	}
 
-	val, err := k.Partner.Get(ctx, msg.Index)
+	_, err := k.Partner.Get(ctx, msg.Index)
 	if err != nil {
 		if errors.Is(err, collections.ErrNotFound) {
 			return nil, errorsmod.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 		}
 		return nil, errorsmod.Wrap(sdkerrors.ErrLogic, err.Error())
-	}
-
-	if msg.Creator != val.Creator {
-		return nil, errorsmod.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
 	if err := k.Partner.Remove(ctx, msg.Index); err != nil {

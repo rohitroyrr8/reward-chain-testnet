@@ -107,6 +107,7 @@ The custom `rewards` module now includes:
 - partner CRUD scaffolding
 - initial `issue-reward` flow
 - initial `burn-reward` flow
+- parameter-driven admin/operator authorization
 
 See `docs/rewards-module.md` for the current behavior and validation rules.
 

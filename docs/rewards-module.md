@@ -8,6 +8,7 @@ Current responsibilities:
 - partner record management
 - reward issuance flow
 - reward burn flow
+- operator/admin-gated authorization for sensitive actions
 
 ## Partner model
 

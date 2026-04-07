@@ -10,5 +10,7 @@ option go_package = "rewardchain/x/rewards/types";
 message Params {
   option (amino.name) = "rewardchain/x/rewards/Params";
   option (gogoproto.equal) = true;
-  
+
+  string admin_address = 1;
+  repeated string operator_addresses = 2;
 }
