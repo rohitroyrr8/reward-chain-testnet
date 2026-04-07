@@ -1,0 +1,20 @@
+version: '3.9'
+
+services:
+  rewardchaind:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rewardchaind
+    ports:
+      - "26656:26656"
+      - "26657:26657"
+      - "1317:1317"
+      - "9090:9090"
+      - "9091:9091"
+    volumes:
+      - rewardchain-data:/root/.rewardchain
+    command: ["rewardchaind", "start"]
+
+volumes:
+  rewardchain-data:

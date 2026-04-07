@@ -39,6 +39,12 @@ This command installs dependencies, builds the chain, initializes local state, a
 make install
 ```
 
+### Build the binary
+
+```bash
+make build
+```
+
 ### Run tests
 
 ```bash
@@ -56,6 +62,22 @@ make test-unit
 ```bash
 make proto-gen
 ```
+
+## Container workflow
+
+### Build the Docker image
+
+```bash
+docker build -t rewardchain:local .
+```
+
+### Start with Docker Compose
+
+```bash
+docker compose up --build
+```
+
+See `docs/deployment.md` for local deployment and container usage notes.
 
 ## Configuration
 
