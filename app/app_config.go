@@ -1,6 +1,8 @@
 package app
 
 import (
+	_ "rewardchain/x/rewards/module"
+	rewardsmoduletypes "rewardchain/x/rewards/types"
 	"time"
 
 	runtimev1alpha1 "cosmossdk.io/api/cosmos/app/runtime/v1alpha1"
@@ -122,14 +124,14 @@ var (
 						// ibc modules
 						ibcexported.ModuleName,
 						// chain modules
-					},
+						rewardsmoduletypes.ModuleName},
 					EndBlockers: []string{
 						govtypes.ModuleName,
 						stakingtypes.ModuleName,
 						feegrant.ModuleName,
 						group.ModuleName,
 						// chain modules
-					},
+						rewardsmoduletypes.ModuleName},
 					// The following is mostly only needed when ModuleName != StoreKey name.
 					OverrideStoreKeys: []*runtimev1alpha1.StoreKeyConfig{
 						{
@@ -164,7 +166,7 @@ var (
 						ibctransfertypes.ModuleName,
 						icatypes.ModuleName,
 						// chain modules
-					},
+						rewardsmoduletypes.ModuleName},
 				}),
 			},
 			{
@@ -259,6 +261,9 @@ var (
 				Name:   epochstypes.ModuleName,
 				Config: appconfig.WrapAny(&epochsmodulev1.Module{}),
 			},
-		},
+			{
+				Name:   rewardsmoduletypes.ModuleName,
+				Config: appconfig.WrapAny(&rewardsmoduletypes.Module{}),
+			}},
 	})
 )

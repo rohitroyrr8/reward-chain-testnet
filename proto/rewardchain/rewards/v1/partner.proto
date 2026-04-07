@@ -1,0 +1,16 @@
+syntax = "proto3";
+package rewardchain.rewards.v1;
+
+option go_package = "rewardchain/x/rewards/types";
+
+// Partner defines the Partner message.
+message Partner {
+  string index = 1; 
+  string name = 2; 
+  string website = 3; 
+  string description = 4; 
+  string wallet = 5; 
+  string status = 6; 
+  string creator = 7;
+}
+

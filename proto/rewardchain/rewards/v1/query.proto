@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package rewardchain.rewards.v1;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "rewardchain/rewards/v1/params.proto";
+import "rewardchain/rewards/v1/partner.proto";
+
+option go_package = "rewardchain/x/rewards/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  
+  // Parameters queries the parameters of the module.
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/rewardchain/rewards/v1/params";
+  
+  }
+  
+  // ListPartner Queries a list of Partner items.
+  rpc GetPartner (QueryGetPartnerRequest) returns (QueryGetPartnerResponse) {
+    option (google.api.http).get = "/rewardchain/rewards/v1/partner/{index}";
+  
+  }
+  
+  // ListPartner defines the ListPartner RPC.
+  rpc ListPartner (QueryAllPartnerRequest) returns (QueryAllPartnerResponse) {
+    option (google.api.http).get = "/rewardchain/rewards/v1/partner";
+  
+  }
+}
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}
+
+// QueryGetPartnerRequest defines the QueryGetPartnerRequest message.
+message QueryGetPartnerRequest {
+  string index = 1;
+}
+
+// QueryGetPartnerResponse defines the QueryGetPartnerResponse message.
+message QueryGetPartnerResponse {
+  Partner partner = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryAllPartnerRequest defines the QueryAllPartnerRequest message.
+message QueryAllPartnerRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// QueryAllPartnerResponse defines the QueryAllPartnerResponse message.
+message QueryAllPartnerResponse {
+  repeated Partner                                partner    = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
