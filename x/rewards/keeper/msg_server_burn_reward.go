@@ -26,7 +26,7 @@ func (k msgServer) BurnReward(ctx context.Context, msg *types.MsgBurnReward) (*t
 		return nil, errorsmod.Wrap(types.ErrPartnerNotFound, msg.PartnerIndex)
 	}
 
-	if strings.TrimSpace(strings.ToLower(partner.Status)) != "active" {
+	if types.NormalizePartnerStatus(partner.Status) != types.PartnerStatusActive {
 		return nil, errorsmod.Wrap(types.ErrInvalidPartnerStatus, partner.Status)
 	}
 
@@ -35,8 +35,8 @@ func (k msgServer) BurnReward(ctx context.Context, msg *types.MsgBurnReward) (*t
 	}
 
 	amount := sdk.NewCoins(msg.Amount...)
-	if !amount.IsValid() || !amount.IsAllPositive() {
-		return nil, types.ErrInvalidRewardAmount
+	if err := types.ValidateRewardCoins(amount); err != nil {
+		return nil, err
 	}
 
 	partnerWallet, err := k.addressCodec.StringToBytes(partner.Wallet)
@@ -55,6 +55,17 @@ func (k msgServer) BurnReward(ctx context.Context, msg *types.MsgBurnReward) (*t
 	if err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, amount); err != nil {
 		return nil, errorsmod.Wrap(err, "failed to burn reward")
 	}
+
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	sdkCtx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeBurnReward,
+			sdk.NewAttribute(types.AttributeKeyPartnerIndex, msg.PartnerIndex),
+			sdk.NewAttribute(types.AttributeKeyOwner, msg.Owner),
+			sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
+			sdk.NewAttribute(types.AttributeKeyReason, strings.TrimSpace(msg.Reason)),
+		),
+	)
 
 	return &types.MsgBurnRewardResponse{}, nil
 }

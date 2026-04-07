@@ -36,7 +36,9 @@ Validation currently includes:
 - partner status is `active`
 - non-empty reason
 - valid positive amount
+- only the `reward` denom is accepted
 - recipient must match the stored partner wallet
+- emits an `issue_reward` event on success
 
 ## Burn reward
 
@@ -49,7 +51,9 @@ Validation currently includes:
 - partner status is `active`
 - non-empty reason
 - valid positive amount
+- only the `reward` denom is accepted
 - owner must match the stored partner wallet
+- emits a `burn_reward` event on success
 
 Current burn flow:
 1. transfer coins from the owner account into the module account

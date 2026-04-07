@@ -26,7 +26,7 @@ func (k msgServer) IssueReward(ctx context.Context, msg *types.MsgIssueReward) (
 		return nil, errorsmod.Wrap(types.ErrPartnerNotFound, msg.PartnerIndex)
 	}
 
-	if strings.TrimSpace(strings.ToLower(partner.Status)) != "active" {
+	if types.NormalizePartnerStatus(partner.Status) != types.PartnerStatusActive {
 		return nil, errorsmod.Wrap(types.ErrInvalidPartnerStatus, partner.Status)
 	}
 
@@ -35,8 +35,8 @@ func (k msgServer) IssueReward(ctx context.Context, msg *types.MsgIssueReward) (
 	}
 
 	amount := sdk.NewCoins(msg.Amount...)
-	if !amount.IsValid() || !amount.IsAllPositive() {
-		return nil, types.ErrInvalidRewardAmount
+	if err := types.ValidateRewardCoins(amount); err != nil {
+		return nil, err
 	}
 
 	partnerWallet, err := k.addressCodec.StringToBytes(partner.Wallet)
@@ -51,6 +51,17 @@ func (k msgServer) IssueReward(ctx context.Context, msg *types.MsgIssueReward) (
 	if err := k.bankKeeper.SendCoins(ctx, sdk.AccAddress(partnerWallet), sdk.AccAddress(recipient), amount); err != nil {
 		return nil, errorsmod.Wrap(err, "failed to issue reward")
 	}
+
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	sdkCtx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeIssueReward,
+			sdk.NewAttribute(types.AttributeKeyPartnerIndex, msg.PartnerIndex),
+			sdk.NewAttribute(types.AttributeKeyRecipient, msg.Recipient),
+			sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
+			sdk.NewAttribute(types.AttributeKeyReason, strings.TrimSpace(msg.Reason)),
+		),
+	)
 
 	return &types.MsgIssueRewardResponse{}, nil
 }
