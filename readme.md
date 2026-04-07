@@ -1,50 +1,93 @@
-# rewardchain
-**rewardchain** is a blockchain built using Cosmos SDK and Tendermint and created with [Ignite CLI](https://ignite.com/cli).
+# Reward Chain Testnet
 
-## Get started
+Reward Chain Testnet is a Cosmos SDK-based blockchain scaffolded with Ignite CLI and prepared for iterative development around reward operations, partner management, liquidity flows, and future IBC/EVM compatibility work.
 
-```
+## Current status
+
+This repository currently contains the base chain scaffold and local development setup.
+
+### Chain identity
+- **Chain name:** `rewardchain`
+- **Binary:** `rewardchaind`
+- **Address prefix:** `reward`
+- **Default denom:** `stake`
+
+## Prerequisites
+
+Make sure these tools are installed:
+- Go `1.25.7+`
+- Ignite CLI
+- Git
+
+Optional but recommended:
+- Docker
+- Docker Compose
+
+## Local development
+
+### Start the chain with Ignite
+
+```bash
 ignite chain serve
 ```
 
-`serve` command installs dependencies, builds, initializes, and starts your blockchain in development.
+This command installs dependencies, builds the chain, initializes local state, and starts a development node.
 
-### Configure
+### Install the chain binary locally
 
-Your blockchain in development can be configured with `config.yml`. To learn more, see the [Ignite CLI docs](https://docs.ignite.com).
-
-### Web Frontend
-
-Additionally, Ignite CLI offers a frontend scaffolding feature (based on Vue) to help you quickly build a web frontend for your blockchain:
-
-Use: `ignite scaffold vue`
-This command can be run within your scaffolded blockchain project.
-
-
-For more information see the [monorepo for Ignite front-end development](https://github.com/ignite/web).
-
-## Release
-To release a new version of your blockchain, create and push a new tag with `v` prefix. A new draft release with the configured targets will be created.
-
-```
-git tag v0.1
-git push origin v0.1
+```bash
+make install
 ```
 
-After a draft release is created, make your final changes from the release page and publish it.
+### Run tests
 
-### Install
-To install the latest version of your blockchain node's binary, execute the following command on your machine:
-
+```bash
+make test
 ```
-curl https://get.ignite.com/username/rewardchain@latest! | sudo bash
+
+### Run unit tests only
+
+```bash
+make test-unit
 ```
-`username/rewardchain` should match the `username` and `repo_name` of the Github repository to which the source code was pushed. Learn more about [the install process](https://github.com/ignite/installer).
 
-## Learn more
+### Generate protobuf files
 
-- [Ignite CLI](https://ignite.com/cli)
-- [Tutorials](https://docs.ignite.com/guide)
-- [Ignite CLI docs](https://docs.ignite.com)
-- [Cosmos SDK docs](https://docs.cosmos.network)
-- [Developer Chat](https://discord.com/invite/ignitecli)
+```bash
+make proto-gen
+```
+
+## Configuration
+
+Local chain configuration lives in `config.yml`.
+
+Current scaffold defaults include:
+- validator accounts
+- faucet account
+- default stake balances
+- OpenAPI generation output path
+
+## Project goals
+
+The roadmap for this repository includes:
+- reward-focused chain configuration and docs
+- partner management flows
+- liquidity operations
+- reward issuance and burn flows
+- reward swap logic
+- IBC compatibility
+- EVM compatibility planning and implementation
+- deployment and operations documentation
+
+## Repository structure
+
+- `app/` — application wiring and chain configuration
+- `cmd/rewardchaind/` — node binary entrypoints and CLI commands
+- `proto/` — protobuf configuration
+- `docs/` — generated and supporting documentation
+- `config.yml` — Ignite development chain config
+- `Makefile` — common developer commands
+
+## Notes
+
+This project started from an Ignite scaffold and is being customized incrementally. Commits should remain focused, descriptive, and tied to meaningful project progress.

@@ -1,6 +1,8 @@
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 COMMIT := $(shell git log -1 --format='%H')
 APPNAME := rewardchain
+COVER_FILE ?= coverage.out
+COVER_HTML_FILE ?= coverage.html
 
 # do not override user values
 ifeq (,$(VERSION))
@@ -50,6 +52,15 @@ test: govet govulncheck test-unit
 #################
 
 all: install
+
+serve:
+	@ignite chain serve
+
+build:
+	@echo "--> building $(APPNAME)d"
+	@go build $(BUILD_FLAGS) -o build/$(APPNAME)d ./cmd/$(APPNAME)d
+
+.PHONY: serve build
 
 install:
 	@echo "--> ensure dependencies have not been modified"
