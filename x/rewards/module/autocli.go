@@ -20,12 +20,12 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 				{
 					RpcMethod: "ListPartner",
 					Use:       "list-partner",
-					Short:     "List all partner",
+					Short:     "List all partner records",
 				},
 				{
 					RpcMethod:      "GetPartner",
-					Use:            "get-partner [id]",
-					Short:          "Gets a partner",
+					Use:            "get-partner [index]",
+					Short:          "Get a partner by index",
 					Alias:          []string{"show-partner"},
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "index"}},
 				},
@@ -33,11 +33,11 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 		},
 		Tx: &autocliv1.ServiceCommandDescriptor{
 			Service:              types.Msg_serviceDesc.ServiceName,
-			EnhanceCustomCommand: true, // only required if you want to use the custom command
+			EnhanceCustomCommand: true,
 			RpcCommandOptions: []*autocliv1.RpcCommandOptions{
 				{
 					RpcMethod: "UpdateParams",
-					Skip:      true, // skipped because authority gated
+					Skip:      true,
 				},
 				{
 					RpcMethod:      "CreatePartner",
@@ -48,14 +48,26 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 				{
 					RpcMethod:      "UpdatePartner",
 					Use:            "update-partner [index] [name] [website] [description] [wallet] [status]",
-					Short:          "Update partner",
+					Short:          "Update a partner",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "index"}, {ProtoField: "name"}, {ProtoField: "website"}, {ProtoField: "description"}, {ProtoField: "wallet"}, {ProtoField: "status"}},
 				},
 				{
 					RpcMethod:      "DeletePartner",
 					Use:            "delete-partner [index]",
-					Short:          "Delete partner",
+					Short:          "Delete a partner",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "index"}},
+				},
+				{
+					RpcMethod:      "IssueReward",
+					Use:            "issue-reward [partner-index] [recipient] [amount] [reason]",
+					Short:          "Issue a reward to an active partner wallet",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "partner_index"}, {ProtoField: "recipient"}, {ProtoField: "amount"}, {ProtoField: "reason"}},
+				},
+				{
+					RpcMethod:      "BurnReward",
+					Use:            "burn-reward [partner-index] [owner] [amount] [reason]",
+					Short:          "Burn reward tokens from an active partner wallet",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "partner_index"}, {ProtoField: "owner"}, {ProtoField: "amount"}, {ProtoField: "reason"}},
 				},
 			},
 		},

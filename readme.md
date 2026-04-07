@@ -101,6 +101,15 @@ The roadmap for this repository includes:
 - EVM compatibility planning and implementation
 - deployment and operations documentation
 
+## Business module progress
+
+The custom `rewards` module now includes:
+- partner CRUD scaffolding
+- initial `issue-reward` flow
+- initial `burn-reward` flow
+
+See `docs/rewards-module.md` for the current behavior and validation rules.
+
 ## Repository structure
 
 - `app/` — application wiring and chain configuration

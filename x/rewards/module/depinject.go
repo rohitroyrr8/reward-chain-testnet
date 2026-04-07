@@ -6,10 +6,8 @@ import (
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/depinject"
 	"cosmossdk.io/depinject/appconfig"
-	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	ibckeeper "github.com/cosmos/ibc-go/v10/modules/core/keeper"
 
 	"rewardchain/x/rewards/keeper"
 	"rewardchain/x/rewards/types"
@@ -22,7 +20,7 @@ func (AppModule) IsOnePerModuleType() {}
 
 func init() {
 	appconfig.Register(
-	    &types.Module{},
+		&types.Module{},
 		appconfig.Provide(ProvideModule),
 	)
 }
@@ -31,34 +29,33 @@ type ModuleInputs struct {
 	depinject.In
 
 	Config       *types.Module
-	StoreService  store.KVStoreService
+	StoreService store.KVStoreService
 	Cdc          codec.Codec
 	AddressCodec address.Codec
 
 	AuthKeeper types.AuthKeeper
 	BankKeeper types.BankKeeper
-
-    
 }
 
 type ModuleOutputs struct {
 	depinject.Out
 
 	RewardsKeeper keeper.Keeper
-	Module appmodule.AppModule
+	Module        appmodule.AppModule
 }
 
 func ProvideModule(in ModuleInputs) ModuleOutputs {
-	// default to governance authority if not provided
 	authority := authtypes.NewModuleAddress(types.GovModuleName)
 	if in.Config.Authority != "" {
 		authority = authtypes.NewModuleAddressOrBech32Address(in.Config.Authority)
 	}
+
 	k := keeper.NewKeeper(
 		in.StoreService,
-	    in.Cdc,
+		in.Cdc,
 		in.AddressCodec,
-	    authority, 
+		in.BankKeeper,
+		authority,
 	)
 	m := NewAppModule(in.Cdc, k, in.AuthKeeper, in.BankKeeper)
 

@@ -3,24 +3,22 @@ package types
 import (
 	"context"
 
-	
-	
-    sdk "github.com/cosmos/cosmos-sdk/types"
+	address "cosmossdk.io/core/address"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
-
-
 
 // AuthKeeper defines the expected interface for the Auth module.
 type AuthKeeper interface {
-    AddressCodec() address.Codec
-    GetAccount(context.Context, sdk.AccAddress) sdk.AccountI // only used for simulation
-    // Methods imported from account should be defined here
+	AddressCodec() address.Codec
+	GetAccount(context.Context, sdk.AccAddress) sdk.AccountI // only used for simulation
 }
 
 // BankKeeper defines the expected interface for the Bank module.
 type BankKeeper interface {
-    SpendableCoins(context.Context, sdk.AccAddress) sdk.Coins
-    // Methods imported from bank should be defined here
+	SpendableCoins(context.Context, sdk.AccAddress) sdk.Coins
+	SendCoins(context.Context, sdk.AccAddress, sdk.AccAddress, sdk.Coins) error
+	BurnCoins(context.Context, string, sdk.Coins) error
+	SendCoinsFromAccountToModule(context.Context, sdk.AccAddress, string, sdk.Coins) error
 }
 
 // ParamSubspace defines the expected Subspace interface for parameters.
